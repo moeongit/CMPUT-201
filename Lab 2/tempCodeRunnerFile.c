@@ -3,13 +3,9 @@
 #include <limits.h>
 
 int main() {// This program finds the maximum element in an array
-	int length, index = 0;
+	int length, index = -INT_MAX;
 	if (scanf("%d", &length) == 1) {
-        if (length <= 0) {
-            printf("Invalid array length\n");
-            return 1;
-        }
-        int array[length];
+		int array[length];
 		for (int i = 0; i < length; i++) {
 			if (scanf("%d", &array[i]) != 1)
 				exit(100);
