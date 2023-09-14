@@ -1,17 +1,18 @@
 #include <stdio.h>
 
 int main() {
-    int cadAmount;
+    int CAD;
     
     printf("Enter CAD amount: ");
-    if (scanf("%d", &cadAmount) != 1 || cadAmount < 0 || cadAmount >= 100000) {
+    if (scanf("%d", &CAD) != 1 || CAD < 0 || CAD >= 100000) {
         printf("Invalid input\n");
         return 1;
     }
     
-    int usdAmount = (int)((cadAmount * 0.75) + 0.5); // Convert CAD to USD and round to nearest USD
+    int usdAmount = (int)((CAD * 0.75) + 0.5); 
     int usdBills[] = {100, 50, 20, 10, 5, 2, 1};
-    int usdCount[7] = {0};
+    int usdCount[7] = {0}; // This counter is so we can have the amount 
+                          // of each type of bill written in the for loop
     
     printf("Converted USD amount: $%d\n", usdAmount);
     
