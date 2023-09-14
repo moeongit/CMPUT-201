@@ -11,7 +11,7 @@ int main() {
     
     int usdAmount = (int)((CAD * 0.75) + 0.5); 
     int usdBills[] = {100, 50, 20, 10, 5, 2, 1};
-    int usdCount[7] = {0}; // This counter is so we can have the amount 
+    int usdCount[7] = {0}; // This array is so we can have the amount 
                           // of each type of bill written in the for loop
     
     printf("Converted USD amount: $%d\n", usdAmount);
