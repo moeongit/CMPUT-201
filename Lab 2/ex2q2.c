@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 int main() {
     int Cad;
@@ -12,23 +11,28 @@ int main() {
     }
 
     double USD = Cad * 0.75; 
+    double round = USD - (int)USD;
+    
+    if (round >= 0.5) {
+        USD = (int)USD + 1.0;
+    } else {
+        USD = (int)USD;
+    }
 
-    int roundedUSD = round(USD);
-
-    printf("Converted USD Amount: $%d\n", roundedUSD);
-    printf("$100 bills: %d\n", roundedUSD / 100);
-    roundedUSD %= 100;
-    printf("$50 bills: %d\n", roundedUSD / 50);
-    roundedUSD %= 50;
-    printf("$20 bills: %d\n", roundedUSD / 20);
-    roundedUSD %= 20;
-    printf("$10 bills: %d\n", roundedUSD / 10);
-    roundedUSD %= 10;
-    printf("$5 bills: %d\n", roundedUSD / 5);
-    roundedUSD %= 5;
-    printf("$2 bills: %d\n", roundedUSD / 2);
-    roundedUSD %= 2;
-    printf("$1 bills: %d\n", roundedUSD);
+    printf("Converted USD Amount: $%.2f\n", USD);  // Use %.2f for two decimal places
+    printf("$100 bills: %d\n", (int)(USD / 100));
+    USD -= (int)(USD / 100) * 100;
+    printf("$50 bills: %d\n", (int)(USD / 50));
+    USD -= (int)(USD / 50) * 50;
+    printf("$20 bills: %d\n", (int)(USD / 20));
+    USD -= (int)(USD / 20) * 20;
+    printf("$10 bills: %d\n", (int)(USD / 10));
+    USD -= (int)(USD / 10) * 10;
+    printf("$5 bills: %d\n", (int)(USD / 5));
+    USD -= (int)(USD / 5) * 5;
+    printf("$2 bills: %d\n", (int)(USD / 2));
+    USD -= (int)(USD / 2) * 2;
+    printf("$1 bills: %d\n", (int)USD);
 
     return 0;
 }
