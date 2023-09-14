@@ -13,7 +13,7 @@ int main(){
 
     int USD = (Cad * 0.75);
 
-    printf("Converted USD Amount: %d\n", USD);
+    printf("Converted USD Amount: $%d\n", USD);
     printf("$100 bills: %d\n", USD/100);
     USD %= 100;
     printf("$50 bills: %d\n", USD/50);
@@ -26,8 +26,7 @@ int main(){
     USD %= 5;
     printf("$2 bills: %d\n", USD/2);
     USD %= 2;
-    printf("$1 bills: %d\n", USD/1);
-    USD %= 1;
+    printf("$1 bills: %d\n", USD);
     
     return 0;
 }
