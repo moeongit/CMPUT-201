@@ -19,7 +19,7 @@ int main() {
         USD = (int)USD;
     }
 
-    printf("Converted USD Amount: $%.2f\n", USD);  // Use %.2f for two decimal places
+    printf("Converted USD Amount: $%.0f\n", USD);  
     printf("$100 bills: %d\n", (int)(USD / 100));
     USD -= (int)(USD / 100) * 100;
     printf("$50 bills: %d\n", (int)(USD / 50));
