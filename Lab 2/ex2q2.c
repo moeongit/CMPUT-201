@@ -5,7 +5,7 @@ int main() {
     
     printf("Enter CAD amount: ");
     if (scanf("%d", &CAD) != 1 || CAD < 0 || CAD >= 100000) {
-        printf("Invalid input. Please enter a Non-Negative Integer.\n");
+        printf("Invalid input. Please enter a Non-Negative Integer less than 100,000.\n");
         return 1;
     }
     
