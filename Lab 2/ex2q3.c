@@ -16,7 +16,7 @@
 #define OrderOver75PercentageDiscount 0.10
 #define OrderOver150PercentageDiscount 0.15
 
-int main() {
+int main(){
     int hardcoverbooks, softcoverbooks, ebooks;
 
     printf("How many hardcover books are you buying? ");
@@ -71,6 +71,6 @@ int main() {
 
     // Final Total Cost
     printf("Order total: $%.2lf\n", totalcost);
-    
+
     return 0;
 }
