@@ -18,11 +18,6 @@ int main(int argc, char **argv){
 
     }
 
-
     printf("The maximum Integer is: %d\n", max);
-
-
-
-
 
 }
