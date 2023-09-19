@@ -6,6 +6,18 @@ int DiceRoll() {
     return rand() % 6 + 1;
 }
 
+void SortDice(int dice[]) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = i + 1; j < 3; j++) {
+            if (dice[j] < dice[i]) {
+                int temp = dice[i];
+                dice[i] = dice[j];
+                dice[j] = temp;
+            }
+        }
+    }
+}
+
 int ScoreSystem(int dice1, int dice2, int dice3) {
     int Score = 0;
 
@@ -23,7 +35,8 @@ int ScoreSystem(int dice1, int dice2, int dice3) {
         } else if (dice1 == 6) {
             Score = 994;
         }
-    } else if (dice1 == 1 && dice2 == 2 && dice3 == 3) {
+    } 
+    else if (dice1 == 1 && dice2 == 2 && dice3 == 3) {
         Score = 993;
     } 
     else if (dice1 == 4 && dice2 == 5 && dice3 == 6) {
@@ -48,78 +61,79 @@ int ScoreSystem(int dice1, int dice2, int dice3) {
 }
 
 int main() {
-    srand(time(0)); 
+    srand(time(NULL));
 
-    int Player1Life = 3;
-    int Player2Life = 3;
-    int Round = 1;  
+    int player1_lives = 3;
+    int player2_lives = 3;
+    int turn_count = 1;
+    char user_input;
+    int score1, score2;
+    int dice[3];
 
-    while (Player1Life > 0 && Player2Life > 0) {
-        printf("Turn %d player 1: r\n", Round);
+    while (player1_lives > 0 && player2_lives > 0) {
+        score1 = 0;
 
-        int Player1Dice[3];
+        // Player 1's turn
         for (int i = 0; i < 3; i++) {
-            Player1Dice[i] = DiceRoll();
-        }
+            printf("Turn %d player 1: ", turn_count++);
+            scanf(" %c", &user_input);
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = i + 1; j < 3; j++) {
-                if (Player1Dice[j] < Player1Dice[i]) {
-                    int temporary = Player1Dice[i];
-                    Player1Dice[i] = Player1Dice[j];
-                    Player1Dice[j] = temporary;
-                }
+            if (user_input == 'r') {
+                dice[0] = DiceRoll();
+                dice[1] = DiceRoll();
+                dice[2] = DiceRoll();
+                SortDice(dice);
+                score1 = ScoreSystem(dice[0], dice[1], dice[2]);
+                printf("You rolled: %d %d %d = %d points\n", dice[0], dice[1], dice[2], score1);
+            } else if (user_input == 's') {
+                break;
             }
         }
 
-        int Player1Score = ScoreSystem(Player1Dice[0], Player1Dice[1], Player1Dice[2]);
+        turn_count = 1;
 
-        printf("You rolled: %d %d %d = %d points\n", Player1Dice[0], Player1Dice[1], Player1Dice[2], Player1Score);
-        printf("Turn %d player 1: s\n", Round);
-        printf("Turn %d player 2: r\n", Round);
+        score2 = 0;
 
-        Round++;
-
-        int Player2Dice[3];
+        // Player 2's turn
         for (int i = 0; i < 3; i++) {
-            Player2Dice[i] = DiceRoll();
-        }
+            printf("Turn %d player 2: ", turn_count++);
+            scanf(" %c", &user_input);
 
-        for (int i = 0; i < 3; i++) {
-            for (int j = i + 1; j < 3; j++) {
-                if (Player2Dice[j] < Player2Dice[i]) {
-                    int temporary = Player2Dice[i];
-                    Player2Dice[i] = Player2Dice[j];
-                    Player2Dice[j] = temporary;
-                }
+            if (user_input == 'r') {
+                dice[0] = DiceRoll();
+                dice[1] = DiceRoll();
+                dice[2] = DiceRoll();
+                SortDice(dice);
+                score2 = ScoreSystem(dice[0], dice[1], dice[2]);
+                printf("You rolled: %d %d %d = %d points\n", dice[0], dice[1], dice[2], score2);
+            } else if (user_input == 's') {
+                break;
             }
         }
 
-        int Player2Score = ScoreSystem(Player2Dice[0], Player2Dice[1], Player2Dice[2]);
+        // Reset turn counter for next round
+        turn_count = 1;
 
-        printf("You rolled: %d %d %d = %d points\n", Player2Dice[0], Player2Dice[1], Player2Dice[2], Player2Score);
-        printf("Turn %d player 2: s\n", Round);
-
-        if (Player1Score > Player2Score) {
-            Player2Life--;
-            printf("Player 1 wins this Round with %d points\n", Player1Score);
-        } 
-        else if (Player2Score > Player1Score) {
-            Player1Life--;
-            printf("Player 2 wins this Round with %d points\n", Player2Score);
-        } 
-        else {
-            printf("Both players tied this Round with %d points\n", Player1Score);
+        // Determine winner of the round
+        if (score1 > score2) {
+            printf("Player 1 wins this round with %d points\n", score1);
+            player2_lives--;
+        } else if (score2 > score1) {
+            printf("Player 2 wins this round with %d points\n", score2);
+            player1_lives--;
+        } else {
+            printf("Both players tied this round with %d points\n", score1);
         }
 
-        printf("Player 1 lives = %d\n", Player1Life);
-        printf("Player 2 lives = %d\n\n", Player2Life);
+        printf("Player 1 lives = %d\n", player1_lives);
+        printf("Player 2 lives = %d\n\n", player2_lives);
     }
 
-    if (Player1Life <= 0) {
-        printf("Player 2 wins!\n");
+    // Determine overall winner
+    if (player1_lives == 0) {
+        printf("\nPlayer 2 wins!\n");
     } else {
-        printf("Player 1 wins!\n");
+        printf("\nPlayer 1 wins!\n");
     }
 
     return 0;
