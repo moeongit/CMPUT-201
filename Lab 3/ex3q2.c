@@ -3,35 +3,35 @@
 
 int main() {
     int n = 22;
-    int Nums[n];
-    int Max, Min;
+    int nums[n];
+    int max, min;
 
     printf("Enter 22 integers: ");
 
     for (int i = 0; i < n; i++) {
-        if (scanf("%d", &Nums[i]) != 1) {
+        if (scanf("%d", &nums[i]) != 1) {
             printf("Invalid input.\n");
             return 1;
         }
     }
 
-    Min = Max = Nums[0];
+    min = max = nums[0];
 
     for (int i = 0; i < n - 2; i++) {
-        if (Nums[i] > Max) {
-            Max = Nums[i];
+        if (nums[i] > max) {
+            max = nums[i];
         }
-        if (Nums[i] < Min) {
-            Min = Nums[i];
+        if (nums[i] < min) {
+            min = nums[i];
         }
     }
 
-    int x = Nums[n - 2];
-    int y = Nums[n - 1];
+    int x = nums[n - 2];
+    int y = nums[n - 1];
 
-    int Result = x * Max + y * Min;
+    int result = x * max + y * min;
 
-    printf("x * Max + y * Min: %d\n", Result);
+    printf("x * max + y * min: %d\n", result);
 
     return 0;
 }

@@ -115,9 +115,9 @@ int main() {
     }
 
     if (Player1Life == 0) {
-        printf("\nPlayer 2 wins!\n");
+        printf("Player 2 wins!\n");
     } else {
-        printf("\nPlayer 1 wins!\n");
+        printf("Player 1 wins!\n");
     }
 
     return 0;
