@@ -24,13 +24,13 @@ double ProfitCalculation(char crop, bool is_sold) {
 }
 
 int main() {
-    char c;
+    char choice;
     double NetProfit = 0.0;
 
-    while ((c = getchar()) != EOF && c != '\n') {
-        if (c == '/' || c == '#') {
+    while ((choice = getchar()) != EOF && choice != '\n') {
+        if (choice == '/' || choice == '#') {
             char NextCrop = getchar();
-            NetProfit += ProfitCalculation(NextCrop, c == '/');
+            NetProfit += ProfitCalculation(NextCrop, choice == '/');
         }
     }
 
