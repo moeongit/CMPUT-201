@@ -34,6 +34,13 @@ int main() {
         }
     }
 
-    printf("Net profit: $%.2f\n", NetProfit);
+    if (NetProfit < 0) {
+        printf("Net profit: -$%.2f\n", -NetProfit);
+    }
+
+    else {
+        printf("Net profit: $%.2f\n", NetProfit);
+    }
+
     return 0;
 }
