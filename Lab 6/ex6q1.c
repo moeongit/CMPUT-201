@@ -35,7 +35,6 @@ uint32_t exp_mod_2(uint32_t base, uint32_t exp, uint32_t modulo) {
     if(exp == 0) return 1;
     if(exp == 1) return base % modulo;
 
-    // If the result is already in memo array, use it
     if(memo[exp] != 0) return memo[exp];
 
     uint32_t half_exp = exp / 2;
@@ -44,7 +43,6 @@ uint32_t exp_mod_2(uint32_t base, uint32_t exp, uint32_t modulo) {
     uint32_t part_1_calls = exp_mod_2(base, half_exp, modulo);
     uint32_t part_2_calls = exp_mod_2(base, remaining_exp, modulo);
 
-    // Store result in memo array and return
     memo[exp] = (uint32_t)(((uint64_t)part_1_calls * (uint64_t)part_2_calls) % modulo);
     return memo[exp];
 }
