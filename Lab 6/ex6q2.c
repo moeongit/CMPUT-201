@@ -32,7 +32,7 @@ void bubble_sort(int n, int arr[n]) {
     for (int i = 0; i < n-1; i++){
         for (int j = 0; j < n-i-1; j++){
             if (arr[j] > arr[j+1]){
-                double temp = arr[j];
+                int temp = arr[j];
                 arr[j] = arr[j+1];
                 arr[j+1] = temp;
             }
@@ -47,23 +47,23 @@ void bubble_sort(int n, int arr[n]) {
 // Check out the description on here https://en.wikipedia.org/wiki/Gnome_sort
 
 void gnome_sort(int n, int arr[n]) {
-    int i, temp;
-    for (i = 1; i < n;){
-        if (array[i - 1] <= [array[i]]){
-            ++1;
-        }
-        else{
-            temp = array[i];
-            array[i] = array[i - 1];
-            array[i - 1] = temp;
-            --1;
-            if(i == 0){
-                i = 1;
-            }
-        }  
-    }
+    int index = 0;
 
+    while (index < n) {
+        if (index == 0) {
+            index++;
+        }
+        if (arr[index] >= arr[index - 1]) {
+            index++;
+        } else {
+            int temp = arr[index];
+            arr[index] = arr[index - 1];
+            arr[index - 1] = temp;
+            index--;
+        }
+    }
 }
+
 
 
 void insertion_sort(int n, int arr[n]) {
@@ -85,6 +85,15 @@ void insertion_sort(int n, int arr[n]) {
 // The sort you found! (See description below for details)
 
 void custom_sort(int n, int arr[n]) {
+    int gap, i, j, temp;
 
-
+    for (gap = n / 2; gap > 0; gap /= 2) {
+        for (i = gap; i < n; i++) {
+            temp = arr[i];
+            for (j = i; j >= gap && arr[j - gap] > temp; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
 }

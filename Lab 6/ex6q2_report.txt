@@ -1,0 +1,24 @@
+Title: Shell Sort
+
+Description:
+Shell Sort is a generalized version of insertion sort. It allows the exchange of items that are far apart, then progressively reduces the gap between elements being compared. 
+By sorting elements distant from each other, it quickly moves out-of-place elements closer to their final position.
+
+Worst-case asymptotic run time: O(n^2)
+Best-case asymptotic run time: O(n log n)
+
+Advantages:
+- Can be significantly faster than basic O(n^2) algorithms, such as Bubble Sort or Insertion Sort.
+- The algorithm is adaptive, depending on the gap sequence used.
+
+Drawbacks:
+- Not stable, meaning that the relative order of equal sort items is not preserved.
+- Generally less efficient than more advanced algorithms like QuickSort or MergeSort.
+
+When to choose over QuickSort:
+In cases where memory usage is a concern, Shell Sort operates in-place, meaning it doesn't require the additional memory that QuickSort might need for recursion. 
+Additionally, for moderately sized datasets, Shell Sort might have a performance advantage over QuickSort in certain situations.
+
+When to choose over Selection Sort:
+Shell Sort typically performs much better than Selection Sort, especially as the size of the list increases. 
+Given its adaptive nature and ability to handle larger lists more efficiently than Selection Sort, it would be a preferred choice in most scenarios.
