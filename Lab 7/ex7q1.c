@@ -2,26 +2,21 @@
 #include <stdlib.h>
 
 int main() {
-    int NumOfAisles, SerialCode;
+    int NumOfAisles, SerialNum;
     char product, **aisles;
 
     scanf("%d", &NumOfAisles);
 
-    aisles = (char**)malloc(NumOfAisles * sizeof(char*));
-    int* aisleLengths = (int*)malloc(NumOfAisles * sizeof(int));
+    aisles = malloc(NumOfAisles * sizeof(char*));
+    int* aisleLengths = malloc(NumOfAisles * sizeof(int));
 
     for(int i = 0; i < NumOfAisles; i++) {
         aisles[i] = NULL;
         aisleLengths[i] = 0;
     }
 
-    while (1) {
-        int ValueNum;
-        if (scanf("%d", &ValueNum) == EOF) { 
-            break;
-        }
-
-        if (ValueNum == 0) {
+    while (scanf("%d", &SerialNum) != EOF) {
+        if (SerialNum == 0) {
             int index;
 
             scanf("%d", &index);
@@ -33,18 +28,17 @@ int main() {
                 printf("\n");
             }
         } else {
-            SerialCode = ValueNum; 
             getchar(); 
             product = getchar();
 
-            int index = SerialCode % NumOfAisles;
-            int len = aisleLengths[index];
+            int Aisleindex = SerialNum % NumOfAisles;
+            int len = aisleLengths[Aisleindex];
 
-            aisles[index] = (char*)realloc(aisles[index], (len + 2) * sizeof(char));
-            aisles[index][len] = product;
-            aisles[index][len + 1] = '\0';
+            aisles[Aisleindex] = (char*)realloc(aisles[Aisleindex], (len + 2) * sizeof(char));
+            aisles[Aisleindex][len] = product;
+            aisles[Aisleindex][len + 1] = '\0';
 
-            aisleLengths[index]++; 
+            aisleLengths[Aisleindex]++; 
         }
     }
 
