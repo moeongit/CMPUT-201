@@ -83,7 +83,7 @@ void insertion_sort(int n, int arr[n]) {
 
 
 // The sort you found! (See description below for details)
-
+// Shell Sort
 void custom_sort(int n, int arr[n]) {
     int gap, i, j, temp;
 

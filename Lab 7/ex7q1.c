@@ -49,8 +49,7 @@ int main() {
     }
 
     free(aisles);
-
     free(aisleLengths);
-
+    
     return 0;
 }
