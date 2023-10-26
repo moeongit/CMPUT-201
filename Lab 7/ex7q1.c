@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 int main() {
-    int NumOfAisles, SerialNum;
+    int NumOfAisles, SerialCode;
     char product, **aisles;
 
     scanf("%d", &NumOfAisles);
@@ -33,11 +33,11 @@ int main() {
                 printf("\n");
             }
         } else {
-            SerialNum = ValueNum; 
+            SerialCode = ValueNum; 
             getchar(); 
             product = getchar();
 
-            int index = SerialNum % NumOfAisles;
+            int index = SerialCode % NumOfAisles;
             int len = aisleLengths[index];
 
             aisles[index] = (char*)realloc(aisles[index], (len + 2) * sizeof(char));
