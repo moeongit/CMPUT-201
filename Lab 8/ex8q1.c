@@ -1,10 +1,10 @@
 #include "ex8q1.h"
 
-struct Entry {
+typedef struct Entry {
     float index;
     int value;
     struct Entry* next;
-};
+} Entry;
 
 Entry* insert_entry(Entry* head, float index, int value) {
     Entry* NewEntry = malloc(sizeof(Entry));
@@ -22,6 +22,7 @@ Entry* insert_entry(Entry* head, float index, int value) {
     }
 
     Entry* current = head;
+    
     while (current->next && current->next->index < index) {
         current = current->next;
     }
