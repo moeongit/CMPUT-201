@@ -40,7 +40,7 @@ Entry* insert_entry(Entry* head, float index, int value) {
 }
 
 void print_array(Entry* head) {
-    printf("[");
+    printf("[");    
     Entry* current = head;
     while (current) {
         printf("%d", current->value);
