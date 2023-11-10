@@ -16,7 +16,7 @@ Entry* insert_entry(Entry* head, float index, int value) {
         return NewEntry;
     }
 
-    if (head->index > index) {
+    if (head->index > index) { 
         NewEntry->next = head;
         return NewEntry;
     }
