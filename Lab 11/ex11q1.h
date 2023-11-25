@@ -21,7 +21,9 @@ Vec* vec_create(void) {
     }
 
     vec->capacity = 10;
+
     vec->length = 0;
+
     vec->storage = malloc(sizeof(int) * vec->capacity);
 
     if (!vec->storage) {
@@ -38,13 +40,13 @@ void vec_insert_at(Vec* vec, int at, int item) {
     }
 
     if (vec->length == vec->capacity) {
-
         int NewCapacity = vec->capacity * 2;
         int* NewStorage = realloc(vec->storage, sizeof(int) * NewCapacity);
         if (!NewStorage) {
             return; 
         }
         vec->storage = NewStorage;
+
         vec->capacity = NewCapacity;
     }
 
@@ -53,6 +55,7 @@ void vec_insert_at(Vec* vec, int at, int item) {
     }
 
     vec->storage[at] = item;
+
     vec->length++;
 }
 
@@ -63,7 +66,6 @@ void vec_print(Vec* vec) {
     }
 
     printf("[");
-
     for (int i = 0; i < vec->length; ++i) {
         printf("%d", vec->storage[i]);
         if (i < vec->length - 1) {
@@ -76,6 +78,7 @@ void vec_print(Vec* vec) {
 void vec_free(Vec* vec) {
     if (vec) {
         free(vec->storage);
+
         free(vec);
     }
 }
@@ -95,7 +98,9 @@ LinkedListNode* list_node_create(int item) {
         return NULL;
     }
     node->item = item;
+
     node->next = NULL;
+
     return node;
 }
 
@@ -109,9 +114,10 @@ LinkedList* list_create(void) {
     if (list == NULL) {
         return NULL;
     }
-
     list->length = 0;
+
     list->start = NULL;
+
     return list;
 }
 
@@ -128,13 +134,13 @@ void list_insert_at(LinkedList* list, int at, int item) {
     if (at == 0) {
         newNode->next = list->start;
         list->start = newNode;
-    } 
-    else {
+    } else {
         LinkedListNode* current = list->start;
         for (int i = 0; i < at - 1; i++) {
             current = current->next;
         }
         newNode->next = current->next;
+
         current->next = newNode;
     }
     list->length++;
@@ -187,8 +193,11 @@ DoublyLinkedListNode* dlist_node_create(int item) {
     if (node == NULL) {
         return NULL;
     }
+    
     node->item = item;
+    
     node->prev = NULL;
+
     node->next = NULL;
     return node;
 }
@@ -207,13 +216,14 @@ DoublyLinkedList* dlist_create(void) {
     }
     list->length = 0;
     list->start = NULL;
+
     list->end = NULL;
     return list;
 }
 
 void dlist_insert_at(DoublyLinkedList* l, int at, int item) {
     if (l == NULL || at < 0 || at > l->length) {
-        return;
+        return; 
     }
 
     DoublyLinkedListNode* newNode = dlist_node_create(item);
@@ -224,18 +234,15 @@ void dlist_insert_at(DoublyLinkedList* l, int at, int item) {
     if (l->length == 0) {
         l->start = newNode;
         l->end = newNode;
-    } 
-    else if (at == 0) {
+    } else if (at == 0) {
         newNode->next = l->start;
         l->start->prev = newNode;
         l->start = newNode;
-    } 
-    else if (at == l->length) {
+    } else if (at == l->length) {
         newNode->prev = l->end;
         l->end->next = newNode;
         l->end = newNode;
-    } 
-    else {
+    } else {
         DoublyLinkedListNode* current = (at < l->length / 2) ? l->start : l->end;
         for (int i = (at < l->length / 2) ? 0 : l->length - 1; 
              (at < l->length / 2) ? i < at : i > at; 
