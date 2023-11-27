@@ -112,7 +112,9 @@ void list_insert_at(LinkedList* list, int at, int item) {
     if (at == 0) {
         newNode->next = list->start;
         list->start = newNode;
-    } else {
+    } 
+    
+    else {
         LinkedListNode* current = list->start;
         for (int i = 0; i < at - 1; i++) {
             current = current->next;
@@ -200,15 +202,21 @@ void dlist_insert_at(DoublyLinkedList* l, int at, int item) {
     if (l->length == 0) {
         l->start = newNode;
         l->end = newNode;
-    } else if (at == 0) {
+    } 
+    
+    else if (at == 0) {
         newNode->next = l->start;
         l->start->prev = newNode;
         l->start = newNode;
-    } else if (at == l->length) {
+    } 
+    
+    else if (at == l->length) {
         newNode->prev = l->end;
         l->end->next = newNode;
         l->end = newNode;
-    } else {
+    } 
+    
+    else {
         DoublyLinkedListNode* current;
         int i;
 
@@ -219,7 +227,8 @@ void dlist_insert_at(DoublyLinkedList* l, int at, int item) {
                 current = current->next;
                 i++;
             }
-        } else {
+        } 
+        else {
             current = l->end;
             i = l->length - 1;
             while (i > at) {
