@@ -6,6 +6,16 @@
 
 typedef uint32_t NewFloat;
 
+NewFloat bits_string_to_nfloat(const char *s) {
+    NewFloat result = 0;
+    while (*s) {
+        result = (result << 1) | (*s - '0');
+        s++;
+    }
+    return result;
+}
+
+
 void nfloat_debug(NewFloat f){ //part 1
     printf("%d ", (f >> 31) & 1);
     
@@ -20,13 +30,151 @@ void nfloat_debug(NewFloat f){ //part 1
     printf("\n");
 }
 
-NewFloat float_to_nfloat(float f); //part 2
 
-void nfloat_print(NewFloat f); //part 3
+NewFloat float_to_nfloat(float f) {
+    uint32_t bits;
+    memcpy(&bits, &f, sizeof(float));
 
-NewFloat nfloat_double(NewFloat f); //part 4
-NewFloat nfloat_add(NewFloat a, NewFloat b);
+    uint32_t sign = (bits >> 31) & 0x1;
 
+    int32_t exponent = ((bits >> 23) & 0xFF) - 127 + 15;
+
+    uint32_t mantissa = (bits & 0x7FFFFF);
+
+    if (exponent >= 31) {
+        exponent = 31; 
+        mantissa = 0; 
+    } else if (exponent <= 0) {
+        while (exponent < 0 && mantissa != 0) {
+            mantissa >>= 1; 
+            exponent++;
+        }
+        if (exponent < 0) {
+            exponent = 0; 
+        }
+    }
+    mantissa <<= 3;
+
+    NewFloat nf = (sign << 31) | ((exponent & 0x1F) << 26) | (mantissa & 0x03FFFFFF);
+    return nf;
+}
+
+
+
+void nfloat_print(NewFloat f) {
+    int sign = (f >> 31) & 1;
+
+    int exponent = ((f >> 26) & 0x1F) - 15;
+
+    uint32_t mantissa = f & 0x03FFFFFF;
+
+    if (exponent == -15 && mantissa == 0) {
+        printf("%c0.0000000\n", sign ? '-' : ' ');
+        return;
+    }
+
+    double value = mantissa;
+    if (exponent == -15) {
+        value /= (1 << 25); 
+    } else {
+        value = (1 << 26) | mantissa;
+        if (exponent > 0) {
+            while (exponent--) value *= 2;
+        } else {
+            while (exponent++) value /= 2;
+        }
+    }
+    
+    if (sign) {
+        value = -value;
+    }
+
+    value /= (1 << 26); 
+
+    printf("%.7f\n", value);
+}
+
+
+NewFloat nfloat_double(NewFloat f) {
+    if ((f & 0x7FFFFFFF) == 0) {
+        return f; 
+    }
+
+    int exponent = (f >> 26) & 0x1F;
+    if (exponent == 0) {
+        uint32_t mantissa = f & 0x03FFFFFF;
+        mantissa <<= 1; 
+        if (mantissa & (1 << 26)) {
+            exponent++;
+            mantissa &= 0x03FFFFFF;
+        }
+        return (f & 0x80000000) | (exponent << 26) | mantissa; 
+    } else if (exponent < 30) {
+        exponent++;
+        return (f & 0x80000000) | (exponent << 26) | (f & 0x03FFFFFF);
+    } else {
+        return (f & 0x80000000) | (31 << 26); 
+    }
+}
+
+NewFloat nfloat_add(NewFloat a, NewFloat b) {
+    int sign_a = (a >> 31) & 1;
+    int sign_b = (b >> 31) & 1;
+    int exponent_a = (a >> 26) & 0x1F;
+    int exponent_b = (b >> 26) & 0x1F;
+    uint32_t mantissa_a = a & 0x03FFFFFF;
+    uint32_t mantissa_b = b & 0x03FFFFFF;
+
+    if (exponent_a != 0) mantissa_a |= 0x04000000;
+    if (exponent_b != 0) mantissa_b |= 0x04000000;
+
+    while (exponent_a < exponent_b) {
+        mantissa_a >>= 1;
+        exponent_a++;
+    }
+    while (exponent_b < exponent_a) {
+        mantissa_b >>= 1;
+        exponent_b++;
+    }
+
+    int sum_sign = 1;
+    uint32_t mantissa_sum;
+    if (sign_a == sign_b) {
+        mantissa_sum = mantissa_a + mantissa_b;
+        sum_sign = sign_a;
+    } else {
+        if (mantissa_a >= mantissa_b) {
+            mantissa_sum = mantissa_a - mantissa_b;
+            sum_sign = sign_a;
+        } else {
+            mantissa_sum = mantissa_b - mantissa_a;
+            sum_sign = sign_b;
+        }
+    }
+
+    int sum_exponent = exponent_a;
+    while (mantissa_sum >= 0x08000000 && sum_exponent < 31) {
+        mantissa_sum >>= 1;
+        sum_exponent++;
+    }
+
+    while (sum_exponent > 0 && !(mantissa_sum & 0x04000000) && sum_exponent < 31) {
+        mantissa_sum <<= 1;
+        sum_exponent--;
+    }
+
+    if (sum_exponent >= 31) {
+        mantissa_sum = 0;
+        sum_exponent = 31;
+    }
+
+    if (sum_exponent != 0) {
+        mantissa_sum &= 0x03FFFFFF;
+    }
+
+    NewFloat result = ((uint32_t)sum_sign << 31) | ((sum_exponent & 0x1F) << 26) | (mantissa_sum);
+    return result;
+}
 
 int main(void) {
     int part_num;
@@ -43,31 +191,31 @@ int main(void) {
             break;
         } else if (part_num == 1) {
             scanf("%s", s1);
-            //n1 = bits_string_to_nfloat(s1);
+            n1 = bits_string_to_nfloat(s1);
             nfloat_debug(n1);
         } else if (part_num == 2) {
             scanf("%f", &f1);
-            //n1 = float_to_nfloat(f1);
-            //nfloat_debug(n1);
+            n1 = float_to_nfloat(f1);
+            nfloat_debug(n1);
         } else if (part_num == 3) {
             scanf("%s", s1);
-            //n1 = bits_string_to_nfloat(s1);
-            //nfloat_print(n1);
+            n1 = bits_string_to_nfloat(s1);
+            nfloat_print(n1);
         } else {
             scanf("%s ", s1);
 
             if (s1[0] == 'd') {
                 scanf("%f", &f1);
-                //n1 = float_to_nfloat(f1);
-                //n1 = nfloat_double(n1);
+                n1 = float_to_nfloat(f1);
+                n1 = nfloat_double(n1);
             } else {
                 scanf("%f %f", &f1, &f2);
-                //n1 = float_to_nfloat(f1);
-                //n2 = float_to_nfloat(f2);
-                //n1 = nfloat_add(n1, n2);
+                n1 = float_to_nfloat(f1);
+                n2 = float_to_nfloat(f2);
+                n1 = nfloat_add(n1, n2);
             }
 
-            //nfloat_print(n1);
+            nfloat_print(n1);
         }
     }
 }
