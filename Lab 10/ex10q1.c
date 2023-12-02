@@ -53,7 +53,8 @@ int main() {
                     printf("%d\n", removeFront(&frontHalf));
                 } else if (backHalf.length > 0) {
                     printf("%d\n", removeBack(&backHalf));
-                } else {
+                } 
+                else {
                     printf("empty\n");
                 }
                 break;
@@ -83,7 +84,6 @@ int main() {
 void initializeRing(Ring *ring, int capacity) {
     ring->head = (int*) malloc(capacity * sizeof(int));
     if (ring->head == NULL) {
-        fprintf(stderr, "Failed to allocate memory for ring head\n");
         exit(EXIT_FAILURE);
     }
     ring->length = 0;
@@ -96,7 +96,6 @@ void resizeRing(Ring *ring) {
     int newCapacity = ring->capacity * 2;
     int* newhead = (int*) realloc(ring->head, newCapacity * sizeof(int));
     if (newhead == NULL) {
-        fprintf(stderr, "Failed to reallocate memory for ring head\n");
         exit(EXIT_FAILURE);
     }
     ring->head = newhead;
@@ -123,7 +122,6 @@ void insertBack(Ring *ring, int value) {
 
 int removeFront(Ring *ring) {
     if (ring->length == 0) {
-        fprintf(stderr, "Attempted to remove from an empty ring head\n");
         exit(EXIT_FAILURE);
     }
     int value = ring->head[ring->front];
@@ -134,7 +132,6 @@ int removeFront(Ring *ring) {
 
 int removeBack(Ring *ring) {
     if (ring->length == 0) {
-        fprintf(stderr, "Attempted to remove from an empty ring head\n");
         exit(EXIT_FAILURE);
     }
     int value = ring->head[ring->rear];
