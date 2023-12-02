@@ -6,14 +6,14 @@
 
 typedef uint32_t NewFloat;
 
-NewFloat bits_string_to_nfloat(const char *s) {
+NewFloat bits_string_to_nfloat(char *s) {
     NewFloat result = 0;
-    while (*s) {
+    for (; *s; s++) {
         result = (result << 1) | (*s - '0');
-        s++;
     }
     return result;
 }
+
 
 
 void nfloat_debug(NewFloat f){ //part 1
@@ -31,20 +31,21 @@ void nfloat_debug(NewFloat f){ //part 1
 }
 
 
-NewFloat float_to_nfloat(float f) {
-    uint32_t bits;
-    memcpy(&bits, &f, sizeof(float));
+NewFloat float_to_nfloat(float f) { //part 2
+    uint32_t floatBits;
+    memcpy(&floatBits, &f, sizeof(float));
 
-    uint32_t sign = (bits >> 31) & 0x1;
+    uint32_t sign = (floatBits >> 31) & 0x1;
 
-    int32_t exponent = ((bits >> 23) & 0xFF) - 127 + 15;
+    int32_t exponent = ((floatBits >> 23) & 0xFF) - 127 + 15;
 
-    uint32_t mantissa = (bits & 0x7FFFFF);
+    uint32_t mantissa = (floatBits & 0x7FFFFF);
 
     if (exponent >= 31) {
         exponent = 31; 
         mantissa = 0; 
-    } else if (exponent <= 0) {
+    } 
+    else if (exponent <= 0) {
         while (exponent < 0 && mantissa != 0) {
             mantissa >>= 1; 
             exponent++;
@@ -61,7 +62,7 @@ NewFloat float_to_nfloat(float f) {
 
 
 
-void nfloat_print(NewFloat f) {
+void nfloat_print(NewFloat f) { //part 3
     int sign = (f >> 31) & 1;
 
     int exponent = ((f >> 26) & 0x1F) - 15;
@@ -73,29 +74,29 @@ void nfloat_print(NewFloat f) {
         return;
     }
 
-    double value = mantissa;
+    double decimalValue = mantissa;
     if (exponent == -15) {
-        value /= (1 << 25); 
+        decimalValue /= (1 << 25); 
     } else {
-        value = (1 << 26) | mantissa;
+        decimalValue = (1 << 26) | mantissa;
         if (exponent > 0) {
-            while (exponent--) value *= 2;
+            while (exponent--) decimalValue *= 2;
         } else {
-            while (exponent++) value /= 2;
+            while (exponent++) decimalValue /= 2;
         }
     }
     
     if (sign) {
-        value = -value;
+        decimalValue = -decimalValue;
     }
 
-    value /= (1 << 26); 
+    decimalValue /= (1 << 26); 
 
-    printf("%.7f\n", value);
+    printf("%.7f\n", decimalValue);
 }
 
 
-NewFloat nfloat_double(NewFloat f) {
+NewFloat nfloat_double(NewFloat f) { //part 4
     if ((f & 0x7FFFFFFF) == 0) {
         return f; 
     }
@@ -137,42 +138,42 @@ NewFloat nfloat_add(NewFloat a, NewFloat b) {
         exponent_b++;
     }
 
-    int sum_sign = 1;
-    uint32_t mantissa_sum;
+    int resultSign = 1;
+    uint32_t resultMantissa;
     if (sign_a == sign_b) {
-        mantissa_sum = mantissa_a + mantissa_b;
-        sum_sign = sign_a;
+        resultMantissa = mantissa_a + mantissa_b;
+        resultSign = sign_a;
     } else {
         if (mantissa_a >= mantissa_b) {
-            mantissa_sum = mantissa_a - mantissa_b;
-            sum_sign = sign_a;
+            resultMantissa = mantissa_a - mantissa_b;
+            resultSign = sign_a;
         } else {
-            mantissa_sum = mantissa_b - mantissa_a;
-            sum_sign = sign_b;
+            resultMantissa = mantissa_b - mantissa_a;
+            resultSign = sign_b;
         }
     }
 
-    int sum_exponent = exponent_a;
-    while (mantissa_sum >= 0x08000000 && sum_exponent < 31) {
-        mantissa_sum >>= 1;
-        sum_exponent++;
+    int resultExponent = exponent_a;
+    while (resultMantissa >= 0x08000000 && resultExponent < 31) {
+        resultMantissa >>= 1;
+        resultExponent++;
     }
 
-    while (sum_exponent > 0 && !(mantissa_sum & 0x04000000) && sum_exponent < 31) {
-        mantissa_sum <<= 1;
-        sum_exponent--;
+    while (resultExponent > 0 && !(resultMantissa & 0x04000000) && resultExponent < 31) {
+        resultMantissa <<= 1;
+        resultExponent--;
     }
 
-    if (sum_exponent >= 31) {
-        mantissa_sum = 0;
-        sum_exponent = 31;
+    if (resultExponent >= 31) {
+        resultMantissa = 0;
+        resultExponent = 31;
     }
 
-    if (sum_exponent != 0) {
-        mantissa_sum &= 0x03FFFFFF;
+    if (resultExponent != 0) {
+        resultMantissa &= 0x03FFFFFF;
     }
 
-    NewFloat result = ((uint32_t)sum_sign << 31) | ((sum_exponent & 0x1F) << 26) | (mantissa_sum);
+    NewFloat result = ((uint32_t)resultSign << 31) | ((resultExponent & 0x1F) << 26) | (resultMantissa);
     return result;
 }
 
