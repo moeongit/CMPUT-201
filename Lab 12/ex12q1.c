@@ -14,8 +14,6 @@ NewFloat bits_string_to_nfloat(char *s) {
     return result;
 }
 
-
-
 void nfloat_debug(NewFloat f){ //part 1
     printf("%d ", (f >> 31) & 1);
     
@@ -60,8 +58,6 @@ NewFloat float_to_nfloat(float f) { //part 2
     return nf;
 }
 
-
-
 void nfloat_print(NewFloat f) { //part 3
     int sign = (f >> 31) & 1;
 
@@ -94,7 +90,6 @@ void nfloat_print(NewFloat f) { //part 3
 
     printf("%.7f\n", decimalValue);
 }
-
 
 NewFloat nfloat_double(NewFloat f) { //part 4
     if ((f & 0x7FFFFFFF) == 0) {
