@@ -66,9 +66,14 @@ void nfloat_print(NewFloat f) { //part 3
     uint32_t mantissa = f & 0x03FFFFFF;
 
     if (exponent == -15 && mantissa == 0) {
-        printf("%c0.0000000\n", sign ? '-' : ' ');
+        if (sign) {
+            printf("-0.0000000\n");
+        } else {
+            printf(" 0.0000000\n"); 
+        }
         return;
     }
+
 
     double decimalValue = mantissa;
     if (exponent == -15) {
