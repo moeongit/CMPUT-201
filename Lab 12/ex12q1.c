@@ -4,121 +4,128 @@
 #include <string.h>
 #include <assert.h>
 
-typedef uint32_t NewFloat;
+typedef uint32_t NewFloat; // Define NewFloat as an alias for 32-bit unsigned integer
 
+// Function: Convert a string of binary digits to NewFloat
 NewFloat bits_string_to_nfloat(char *s) {
-    NewFloat result = 0;
-    for (; *s; s++) {
-        result = (result << 1) | (*s - '0');
+    NewFloat result = 0; // Initialize result to zero
+    for (; *s; s++) { // Loop through each character in the string
+        result = (result << 1) | (*s - '0'); // Shift result left and add the new digit
     }
-    return result;
+    return result; // Return the binary representation as NewFloat
 }
 
-void nfloat_debug(NewFloat f){ //part 1
-    printf("%d ", (f >> 31) & 1);
+// Function: Print the binary representation of a NewFloat
+void nfloat_debug(NewFloat f){
+    printf("%d ", (f >> 31) & 1); // Print the sign bit
     
+    // Print the exponent part
     for (int i = 30; i >= 26; --i) {
         printf("%d", (f >> i) & 1);
     }
     printf(" ");
     
+    // Print the mantissa part
     for (int i = 25; i >= 0; --i) {
         printf("%d", (f >> i) & 1);
     }
-    printf("\n");
+    printf("\n"); // End the line after printing
 }
 
+// Function: Convert a standard float to a NewFloat
+NewFloat float_to_nfloat(float f) {
+    uint32_t floatBits; // Temporary variable to hold the binary representation of the float
+    memcpy(&floatBits, &f, sizeof(float)); // Copy the float into the uint32_t
 
-NewFloat float_to_nfloat(float f) { //part 2
-    uint32_t floatBits;
-    memcpy(&floatBits, &f, sizeof(float));
-
+    // Extract the sign, exponent, and mantissa from the float
     uint32_t sign = (floatBits >> 31) & 0x1;
-
-    int32_t exponent = ((floatBits >> 23) & 0xFF) - 127 + 15;
-
+    int32_t exponent = ((floatBits >> 23) & 0xFF) - 127 + 15; // Adjust the exponent
     uint32_t mantissa = (floatBits & 0x7FFFFF);
 
+    // Normalize the exponent and mantissa for the NewFloat representation
     if (exponent >= 31) {
         exponent = 31; 
-        mantissa = 0; 
-    } 
-    else if (exponent <= 0) {
+        mantissa = 0;
+    } else if (exponent <= 0) {
         while (exponent < 0 && mantissa != 0) {
-            mantissa >>= 1; 
+            mantissa >>= 1;
             exponent++;
         }
         if (exponent < 0) {
-            exponent = 0; 
+            exponent = 0;
         }
     }
-    mantissa <<= 3;
+    mantissa <<= 3; // Adjust the mantissa for the NewFloat format
 
+    // Assemble and return the NewFloat
     NewFloat nf = (sign << 31) | ((exponent & 0x1F) << 26) | (mantissa & 0x03FFFFFF);
     return nf;
 }
 
-void nfloat_print(NewFloat f) { //part 3
-    int sign = (f >> 31) & 1;
+// Function: Print a NewFloat as a decimal number
+void nfloat_print(NewFloat f) {
+    int sign = (f >> 31) & 1; // Extract the sign
+    int exponent = ((f >> 26) & 0x1F) - 15; // Extract and adjust the exponent
+    uint32_t mantissa = f & 0x03FFFFFF; // Extract the mantissa
 
-    int exponent = ((f >> 26) & 0x1F) - 15;
-
-    uint32_t mantissa = f & 0x03FFFFFF;
-
+    // Handle special case of zero
     if (exponent == -15 && mantissa == 0) {
         if (sign) {
-            printf("-0.0000000\n");
+            printf("-0.0000000\n"); // Print negative zero
         } else {
-            printf(" 0.0000000\n"); 
+            printf(" 0.0000000\n"); // Print positive zero
         }
         return;
     }
 
-
+    // Convert the NewFloat to a decimal value
     double decimalValue = mantissa;
     if (exponent == -15) {
-        decimalValue /= (1 << 25); 
+        decimalValue /= (1 << 25); // Handle denormalized numbers
     } else {
-        decimalValue = (1 << 26) | mantissa;
+        decimalValue = (1 << 26) | mantissa; // Add the implicit leading 1 for normalized numbers
         if (exponent > 0) {
-            while (exponent--) decimalValue *= 2;
+            while (exponent--) decimalValue *= 2; // Scale up for positive exponents
         } else {
-            while (exponent++) decimalValue /= 2;
+            while (exponent++) decimalValue /= 2; // Scale down for negative exponents
         }
     }
     
     if (sign) {
-        decimalValue = -decimalValue;
+        decimalValue = -decimalValue; // Apply the sign
     }
 
-    decimalValue /= (1 << 26); 
+    decimalValue /= (1 << 26); // Normalize the value
 
-    printf("%.7f\n", decimalValue);
+    printf("%.7f\n", decimalValue); // Print the decimal value with 7 digits precision
 }
 
-NewFloat nfloat_double(NewFloat f) { //part 4
-    if ((f & 0x7FFFFFFF) == 0) {
-        return f; 
+// Function: Double the value of a NewFloat
+NewFloat nfloat_double(NewFloat f) {
+    if ((f & 0x7FFFFFFF) == 0) { // If f is zero or negative zero, return as is
+        return f;
     }
 
-    int exponent = (f >> 26) & 0x1F;
-    if (exponent == 0) {
+    int exponent = (f >> 26) & 0x1F; // Extract the exponent
+    if (exponent == 0) { // Handle denormalized numbers
         uint32_t mantissa = f & 0x03FFFFFF;
-        mantissa <<= 1; 
-        if (mantissa & (1 << 26)) {
-            exponent++;
-            mantissa &= 0x03FFFFFF;
+        mantissa <<= 1; // Double the mantissa
+        if (mantissa & (1 << 26)) { // Check for mantissa overflow
+            exponent++; // Increment exponent if overflow occurs
+            mantissa &= 0x03FFFFFF; // Normalize mantissa
         }
         return (f & 0x80000000) | (exponent << 26) | mantissa; 
-    } else if (exponent < 30) {
+    } else if (exponent < 30) { // Normal case: simply increment the exponent
         exponent++;
         return (f & 0x80000000) | (exponent << 26) | (f & 0x03FFFFFF);
-    } else {
+    } else { // Handle overflow to infinity
         return (f & 0x80000000) | (31 << 26); 
     }
 }
 
+// Function: Add two NewFloat numbers
 NewFloat nfloat_add(NewFloat a, NewFloat b) {
+    // Extract the sign and exponent of both numbers
     int sign_a = (a >> 31) & 1;
     int sign_b = (b >> 31) & 1;
     int exponent_a = (a >> 26) & 0x1F;
@@ -126,9 +133,11 @@ NewFloat nfloat_add(NewFloat a, NewFloat b) {
     uint32_t mantissa_a = a & 0x03FFFFFF;
     uint32_t mantissa_b = b & 0x03FFFFFF;
 
+    // Normalize mantissas if exponents are non-zero
     if (exponent_a != 0) mantissa_a |= 0x04000000;
     if (exponent_b != 0) mantissa_b |= 0x04000000;
 
+    // Align exponents by shifting the mantissa of the smaller exponent
     while (exponent_a < exponent_b) {
         mantissa_a >>= 1;
         exponent_a++;
@@ -138,41 +147,50 @@ NewFloat nfloat_add(NewFloat a, NewFloat b) {
         exponent_b++;
     }
 
-    int resultSign = 1;
+    // Initialize variables for the result's sign and mantissa
+    int resultSign;
     uint32_t resultMantissa;
+
+    // Add or subtract mantissas based on their signs
     if (sign_a == sign_b) {
         resultMantissa = mantissa_a + mantissa_b;
-        resultSign = sign_a;
+        resultSign = sign_a; // Same sign for both numbers
     } else {
+        // Different signs - perform subtraction
         if (mantissa_a >= mantissa_b) {
             resultMantissa = mantissa_a - mantissa_b;
-            resultSign = sign_a;
+            resultSign = sign_a; // Result takes sign of a
         } else {
             resultMantissa = mantissa_b - mantissa_a;
-            resultSign = sign_b;
+            resultSign = sign_b; // Result takes sign of b
         }
     }
 
+    // Normalize the result
     int resultExponent = exponent_a;
     while (resultMantissa >= 0x08000000 && resultExponent < 31) {
         resultMantissa >>= 1;
         resultExponent++;
     }
 
+    // Further normalization if needed
     while (resultExponent > 0 && !(resultMantissa & 0x04000000) && resultExponent < 31) {
         resultMantissa <<= 1;
         resultExponent--;
     }
 
+    // Handle overflow to infinity
     if (resultExponent >= 31) {
         resultMantissa = 0;
         resultExponent = 31;
     }
 
+    // Adjust mantissa if exponent is non-zero
     if (resultExponent != 0) {
         resultMantissa &= 0x03FFFFFF;
     }
 
+    // Reassemble the result NewFloat from its components
     NewFloat result = ((uint32_t)resultSign << 31) | ((resultExponent & 0x1F) << 26) | (resultMantissa);
     return result;
 }
