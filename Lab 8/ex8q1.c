@@ -1,80 +1,82 @@
 #include "ex8q1.h"
 
-typedef struct Entry {
-    float index;
-    int value;
-    struct Entry* next;
-} Entry;
+float *indexArray = NULL;
+int *valueArray = NULL;
+int CurLength = 0;
 
-Entry* insert_entry(Entry* head, float index, int value) {
-    Entry* NewEntry = malloc(sizeof(Entry));
-    NewEntry->index = index;
-    NewEntry->value = value;
-    NewEntry->next = NULL;
+int BinarySearch(float targetIndex) {
+    int low = 0, high = CurLength - 1, mid;
     
-    if (!head) {
-        return NewEntry;
-    }
+    while (low <= high) {
+        mid = (low + high) / 2;
 
-    if (head->index > index) { 
-        NewEntry->next = head;
-        return NewEntry;
+        if (indexArray[mid] == targetIndex) {
+            return mid;
+        }
+        if (indexArray[mid] < targetIndex) {
+            low = mid + 1;
+        } 
+        else {
+            high = mid - 1;
+        }
     }
-
-    Entry* current = head;
-    
-    while (current->next && current->next->index < index) {
-        current = current->next;
-    }
-
-    if (current->next && current->next->index == index) {
-        current->next->value = value;
-        free(NewEntry);
-    } 
-    else {
-        NewEntry->next = current->next;
-        current->next = NewEntry;
-    }
-
-    return head;
+    return low;
 }
 
-void print_array(Entry* head) {
-    printf("[");    
-    Entry* current = head;
-    while (current) {
-        printf("%d", current->value);
-        if (current->next){
+void UpdateValue(float targetIndex, int newValue) {
+    int pos = BinarySearch(targetIndex);
+    
+    if (pos < CurLength && indexArray[pos] == targetIndex) {
+        valueArray[pos] = newValue;
+    } 
+
+    else {
+        indexArray = realloc(indexArray, (CurLength + 1) * sizeof(float));
+        valueArray = realloc(valueArray, (CurLength + 1) * sizeof(int));
+
+        for (int i = CurLength; i > pos; i--) {
+            indexArray[i] = indexArray[i - 1];
+            valueArray[i] = valueArray[i - 1];
+        }
+
+        indexArray[pos] = targetIndex;
+        valueArray[pos] = newValue;
+        
+        CurLength++;
+    }
+}
+
+void displayValues() {
+    printf("[");
+    for (int i = 0; i < CurLength; i++) 
+    {
+        printf("%d", valueArray[i]);
+        
+        if (i != CurLength - 1) {
             printf(", ");
-        } 
-        current = current->next;
+        }
     }
     printf("]\n");
 }
 
-void free_array(Entry* head) {
-    while (head) {
-        Entry* temp = head;
-        head = head->next;
-        free(temp);
-    }
-}
-
-int main(void) {
+int main() 
+{
     int is_print, value;
     float index;
-    Entry* ArrayHead = NULL;
 
     while (!feof(stdin)) {
         read_line(&is_print, &index, &value);
+        
         if (is_print) {
-            print_array(ArrayHead);
+            displayValues();
         } 
         else {
-            ArrayHead = insert_entry(ArrayHead, index, value);
+            UpdateValue(index, value);
         }
     }
 
-    free_array(ArrayHead);
+    free(indexArray);
+    free(valueArray);
+
     return 0;
 }
