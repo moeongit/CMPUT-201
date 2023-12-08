@@ -18,7 +18,7 @@ NewFloat bits_string_to_nfloat(char *s) {
 // Function: Print the binary representation of a NewFloat
 void nfloat_debug(NewFloat f){
     printf("%d ", (f >> 31) & 1); // Print the sign bit
-    
+    // &1 just isolates the rightmost bit
     // Print the exponent part
     for (int i = 30; i >= 26; --i) {
         printf("%d", (f >> i) & 1);
@@ -36,11 +36,11 @@ void nfloat_debug(NewFloat f){
 NewFloat float_to_nfloat(float f) {
     uint32_t floatBits; // Temporary variable to hold the binary representation of the float
     memcpy(&floatBits, &f, sizeof(float)); // Copy the float into the uint32_t
-
+    // this is how we access the bits
     // Extract the sign, exponent, and mantissa from the float
     uint32_t sign = (floatBits >> 31) & 0x1;
     int32_t exponent = ((floatBits >> 23) & 0xFF) - 127 + 15; // Adjust the exponent
-    uint32_t mantissa = (floatBits & 0x7FFFFF);
+    uint32_t mantissa = (floatBits & 0x7FFFFF); // 23 bits all set to 1 except first
 
     // Normalize the exponent and mantissa for the NewFloat representation
     if (exponent >= 31) {
@@ -106,7 +106,7 @@ NewFloat nfloat_double(NewFloat f) {
         return f;
     }
 
-    int exponent = (f >> 26) & 0x1F; // Extract the exponent
+    int exponent = (f >> 26) & 0x1F; // Extract the exponent, masks out all but last 5 bits
     if (exponent == 0) { // Handle denormalized numbers
         uint32_t mantissa = f & 0x03FFFFFF;
         mantissa <<= 1; // Double the mantissa
@@ -134,7 +134,7 @@ NewFloat nfloat_add(NewFloat a, NewFloat b) {
     uint32_t mantissa_b = b & 0x03FFFFFF;
 
     // Normalize mantissas if exponents are non-zero
-    if (exponent_a != 0) mantissa_a |= 0x04000000;
+    if (exponent_a != 0) mantissa_a |= 0x04000000;  //add an implicit leading 1
     if (exponent_b != 0) mantissa_b |= 0x04000000;
 
     // Align exponents by shifting the mantissa of the smaller exponent
